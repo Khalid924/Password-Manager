@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route("/hello", methods=["GET"])
 def hello_word():
-    return "Hello World!"
+    return "Hello Varinder "
 
 
 @app.route("/view-data", methods=["GET"])
