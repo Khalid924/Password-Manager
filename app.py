@@ -20,5 +20,4 @@ def nextFunction():
     return jsonify(text)
 
 app.run(debug=True)
-a = 7+54
 
