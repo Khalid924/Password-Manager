@@ -16,3 +16,26 @@ from db_models.pms_models import UpdatePasswordSchema
 
 app.config['SECRET_KEY'] = os.environ[current_env+'_secretkey']
 
+# Access controll module
+# Without having a proper JWT authentication token cannot access to API
+def token_required(f):
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        token = None
+        if 'x-access-tokens' in request.headers:
+            token = request.headers['x-access-tokens']
+        if not token:
+            return jsonify({
+                'Error Meesage': "A Valid token is missing!"
+            }), 401
+        try:
+
+            token = jwt.decode(token, app.config['SECRET_KEY'],algorithms=["HS256"])
+            return f(*args,  **kwargs)
+        
+        except (jwt.exceptions.InvalidSignatureError, jwt.InvalidTokenError, exceptions.BadRequest):
+            return jsonify({
+                'Error Meesage': "Your token is expired! Please login in again"
+            }), 401
+
+    return decorator
