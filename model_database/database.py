@@ -35,5 +35,10 @@ class UserList(db.Model):
     passwordCriteraStatus = db.Column(db.Integer())
 
 
+class UserSchema(Schema):
+    username = fields.String(required=True)
+    password = fields.String(required=True)
+    email = fields.String(required=True)
+
 
 db.create_all()
