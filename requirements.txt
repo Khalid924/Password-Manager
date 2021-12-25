@@ -8,3 +8,5 @@ pycryptodome
 python-dotenv
 pycryptodomex
 cryptography
+bcrypt
+pyhibp

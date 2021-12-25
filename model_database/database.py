@@ -34,6 +34,16 @@ class UserList(db.Model):
     role = db.Column(db.String(20))
     passwordCriteraStatus = db.Column(db.Integer())
 
+     #Check the email address in the database when your trying to login to system
+    def check_login(_email):
+        user = UserList.query.filter_by(email=_email).first()
+        if user is None:
+            return False
+        else:
+            return user
+
+
+
 
 class UserSchema(Schema):
     username = fields.String(required=True)

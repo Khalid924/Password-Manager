@@ -6,6 +6,28 @@ from database_config import *
 from model_database.database import LegacyApp
 from model_database.database import UserList
 from model_database.database import PasswordList
+from model_database.database import UserSchema
+from model_password.password import Password
+
+##Input validation
+def required_params(schema):
+    def decorator(fn):
+ 
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
+            try:
+                schema.load(request.get_json())
+            except ValidationError as err:
+                error = {
+                    "status": "error",
+                    "messages": err.messages
+                }
+                return jsonify(error), 400
+            return fn(*args, **kwargs)
+ 
+        return wrapper
+    return decorator
+##Input validation
 
 
 
@@ -13,10 +35,9 @@ from model_database.database import PasswordList
 # User registration module
 @app.route('/signup', methods=['POST'])
 #This is for input validation
+#This annotation represent validation
 @required_params(UserSchema())
-
 def register():
-
     try:
         request_data = request.get_json()
         username = str(request_data['username'])
@@ -35,7 +56,7 @@ def register():
             hibp_result = Password.check_hibp(password)
             is_complexity, complexity_result_msg = Password.check_complexity(
                 password)
-            hash_result = Password.hash_pwd(password)
+            hash_result = Password.(password)
 
             if is_complexity is False:
                 return jsonify(Process='ERROR!', Process_Message=complexity_result_msg)
