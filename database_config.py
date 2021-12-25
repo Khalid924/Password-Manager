@@ -20,13 +20,6 @@ from Cryptodome.Util.Padding import pad, unpad
 from Cryptodome.Cipher import AES
 
 
-#Load envirement variables
-load_dotenv()
-current_env = os.environ['FLASK_ENV']
-
-
-#print(current_env)
-
 
 #init app
 app = Flask(__name__)
@@ -36,7 +29,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 #Database
 #app.config['PROPAGATE_EXCEPTIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, os.environ[current_env+'_DB'])
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, "Test_DB")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 

@@ -1,0 +1,10 @@
+flask
+flask-sqlalchemy
+flask-marshmallow
+marshmallow-sqlalchemy
+pyjwt==2.0.0
+flask-json-schema
+pycryptodome
+python-dotenv
+pycryptodomex
+cryptography
