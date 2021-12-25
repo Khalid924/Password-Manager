@@ -39,3 +39,25 @@ def token_required(f):
             }), 401
 
     return decorator
+
+# Access controll module end
+
+
+##Input validation
+def required_params(schema):
+    def decorator(fn):
+ 
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
+            try:
+                schema.load(request.get_json())
+            except ValidationError as err:
+                error = {
+                    "status": "error",
+                    "messages": err.messages
+                }
+                return jsonify(error), 400
+            return fn(*args, **kwargs)
+ 
+        return wrapper
+    return decorator
