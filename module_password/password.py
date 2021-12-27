@@ -47,7 +47,7 @@ class Password:
 
     @staticmethod
     def check_complexity(password):
-        with open(basedir +'/'+password_complexity.json, 'r') as file:
+        with open(basedir +'/password_complexity.json', 'r') as file:
             criteria = load(file)
             spCharater = criteria['existSpecialCharacter']
             upperCase = criteria['existUpperCase']
@@ -95,3 +95,10 @@ class Password:
                 
             else:
                 return True, "Password suceess"
+
+    @staticmethod
+    def hash_pwd(password):
+        updated_password = password.encode("utf-8")
+        password_hash = bcrypt.hashpw(updated_password, bcrypt.gensalt())
+        #print (password_hash)
+        return password_hash

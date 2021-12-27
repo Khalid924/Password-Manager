@@ -43,6 +43,14 @@ class UserList(db.Model):
             return user
 
 
+    
+    #Create new user and save in database
+    def add_new_user(_username,_password,_email,_role,_passwordCriteraStatus):
+        new_user = UserList(role=_role,username=_username,password=_password,email=_email,passwordCriteraStatus=_passwordCriteraStatus)
+        db.session.add(new_user)  # add new password to database session
+        db.session.commit()  # commit changes to session
+        return new_user
+
 
 
 class UserSchema(Schema):
