@@ -59,4 +59,9 @@ class UserSchema(Schema):
     email = fields.String(required=True)
 
 
+class LoginUserSchema(Schema):
+    password = fields.String(required=True)
+    email = fields.String(required=True)
+
+
 db.create_all()

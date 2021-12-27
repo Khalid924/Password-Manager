@@ -102,3 +102,12 @@ class Password:
         password_hash = bcrypt.hashpw(updated_password, bcrypt.gensalt())
         #print (password_hash)
         return password_hash
+
+    
+    @staticmethod
+    def verify_password(hash_password,password):
+        #print (password)
+        #print (hash_password)
+        hash_pwd=hash_password.encode("utf-8")
+        passsword_status =  bcrypt.checkpw(hash_pwd, password)
+        return passsword_status
