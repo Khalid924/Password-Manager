@@ -7,7 +7,7 @@ from model_database.database import LegacyApp
 from model_database.database import UserList
 from model_database.database import PasswordList
 from model_database.database import UserSchema
-from model_password.password import Password
+from module_password.password import Password
 
 ##Input validation
 def required_params(schema):
@@ -56,7 +56,7 @@ def register():
             hibp_result = Password.check_hibp(password)
             is_complexity, complexity_result_msg = Password.check_complexity(
                 password)
-            hash_result = Password.(password)
+            hash_result = Password.hash_pwd(password)
 
             if is_complexity is False:
                 return jsonify(Process='ERROR!', Process_Message=complexity_result_msg)
