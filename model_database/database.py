@@ -10,6 +10,12 @@ class LegacyApp(db.Model):
     app_name = db.Column(db.String(128), nullable=False )
     pwd = db.relationship('PasswordList', back_populates="parent" , lazy='joined')
 
+        #Add new legacy application to PMS    
+    def add_new_legacy_app(_app_name,_url,_description):
+        new_legacy_app = LegacyApp(app_name=_app_name,description=_description,url=_url)
+        db.session.add(new_legacy_app)  # create a new record
+        db.session.commit()  # commit changes to session
+        return new_legacy_app
 
 #Create Password  model, database table and fields
 class PasswordList(db.Model):
@@ -42,8 +48,14 @@ class UserList(db.Model):
         else:
             return user
 
+     #Create dummy admin User
+    def add_new_admin_user(_username,_password,_email,_role,_passwordCriteraStatus):
+        new_user = UserList(role=_role,username=_username,password=_password,email=_email,passwordCriteraStatus=_passwordCriteraStatus)
+        db.session.add(new_user)  # add new password to database session
+        db.session.commit()  # commit changes to session
+        return new_user
 
-    
+        
     #Create new user and save in database
     def add_new_user(_username,_password,_email,_role,_passwordCriteraStatus):
         new_user = UserList(role=_role,username=_username,password=_password,email=_email,passwordCriteraStatus=_passwordCriteraStatus)
@@ -51,6 +63,13 @@ class UserList(db.Model):
         db.session.commit()  # commit changes to session
         return new_user
 
+    #Filter user by ADMIN role
+    def get_user_by_id(_id):
+        userIsExist = UserList.query.filter_by(id=_id, role="ADMIN").first()
+        if userIsExist is None:
+            return False
+        else:
+            return True
 
 
 class UserSchema(Schema):
@@ -63,5 +82,9 @@ class LoginUserSchema(Schema):
     password = fields.String(required=True)
     email = fields.String(required=True)
 
+class LegacyAppSchema(Schema):
+    url = fields.String(required=True)
+    description = fields.String(required=True)
+    app_name = fields.String(required=True)
 
 db.create_all()

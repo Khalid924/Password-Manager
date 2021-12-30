@@ -9,6 +9,7 @@ from model_database.database import UserList
 from model_database.database import PasswordList
 from model_database.database import UserSchema
 from model_database.database import LoginUserSchema
+from model_database.database import LegacyAppSchema
 from module_password.password import Password
 
 
@@ -155,10 +156,40 @@ def login():
 # User login module end
 
 
+# Legacy Application module
+@app.route('/add_new_legacy_app', methods=['POST'])
+@token_required
+@required_params(LegacyAppSchema())
+def add_legacy_app():
+    try:
+        req_data = request.get_json()
+        app_name = req_data['app_name']
+        url = req_data['url']
+        description = req_data['description']
+        roleStatus = UserList.get_user_by_id(login_session['id'])
+        if roleStatus:
+            result = LegacyApp.add_new_legacy_app(app_name, url, description)
+            return jsonify({"Message": "Succesfuly saved"}), 201
+        else:
+            return jsonify({"Message": "Only Admin can create new applications"}), 401
+
+    except (KeyError, exceptions.BadRequest):
+        return jsonify(Process='ERROR!', Process_Message='Your token is expired! Please login in again')
+
+
+
+#This method generating System admin profile and cannot call by api end point
+@app.before_request
+def add_admin_user():
+    #print("Hello World!")
+    result = UserList.check_login("admin@admin.com")
+    if result is False:
+        hash_result = Password.hash_pwd('123DEs!678')
+        UserList.add_new_admin_user("admin",hash_result,"admin@admin.com","ADMIN",1)
 
 
 
 # Run server
 if __name__ == '__main__':
-    app.run(debug=True)  
+    app.run(debug=True,use_reloader=False)  
     
