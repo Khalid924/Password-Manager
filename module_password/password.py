@@ -98,6 +98,10 @@ class Password:
             else:
                 return True, "Password suceess"
 
+    def loadJson():
+        with open(basedir +'/password_complexity.json', 'a') as f:
+            pass
+
     @staticmethod
     def hash_pwd(password):
         updated_password = password.encode("utf-8")
