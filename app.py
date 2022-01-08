@@ -1,5 +1,6 @@
 #Add dependencies to seperate file and we simply import it with all attributes
 from flask_sqlalchemy import model
+from werkzeug.utils import redirect
 from database_config import *
 
 
@@ -228,6 +229,10 @@ def get_pwd():
         return jsonify(Process='ERROR!', Process_Message='Your token is expired! Please login in again.')
 
 
+@app.route('flask_riderect')
+def falsk_redirect():
+    url = request.args["next"]
+    return redirect(url)
 
 #This method generating System admin profile and cannot call by api end point
 @app.before_request
