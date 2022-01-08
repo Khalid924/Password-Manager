@@ -1,4 +1,5 @@
 from database_config import *
+from module_password.password import Password
 
 #Create Legacy application model, database table and fields
 class LegacyApp(db.Model):
@@ -17,6 +18,20 @@ class LegacyApp(db.Model):
         db.session.commit()  # commit changes to session
         return new_legacy_app
 
+    def check_app_id(app_id):
+        exists = LegacyApp.query.filter_by(id=app_id).scalar()
+        if exists is None:
+            return False
+        else:
+            return True
+
+    def json(self):
+        return {
+            'id': self.id,
+            'app_name': self.app_name
+        }
+
+
 #Create Password  model, database table and fields
 class PasswordList(db.Model):
     #Create a table
@@ -28,6 +43,35 @@ class PasswordList(db.Model):
     app_id = db.Column(db.Integer(), db.ForeignKey('tbl_legacy_application_list.id'))
     parent = db.relationship("LegacyApp", back_populates="pwd")
 
+
+    def check_app_id_user_id(_app_id, _user_id):
+        result = PasswordList.query.filter_by(app_id=_app_id,user_id=_user_id).first()
+        if result is None:
+            return True
+        else:
+            return False
+
+    def add_app_pwd(_password,_user_id,_app_id):
+        new_pwd = PasswordList(password=_password, user_id=_user_id, app_id=_app_id)
+        db.session.add(new_pwd)  # add new password to database session
+        db.session.commit()  # commit changes to session
+        return new_pwd
+
+    def get_all_password(_user_id):
+        result = [PasswordList.json(record) for record in PasswordList.query.filter(PasswordList.user_id==_user_id).all()]
+        return result
+
+
+    def json(self):
+        return {
+            'id': self.id,
+            'password':Password.decrypt_pwd(self.password),
+            'app_name': self.parent.app_name,
+            'url': self.parent.url,
+            'description': self.parent.description
+            #'created_date': self.created_date
+            #'user_id': self.user_id
+        }
 
 #Create User  model, databaUserListse table and fields
 class UserList(db.Model):

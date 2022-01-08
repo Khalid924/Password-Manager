@@ -177,6 +177,57 @@ def add_legacy_app():
         return jsonify(Process='ERROR!', Process_Message='Your token is expired! Please login in again')
 
 
+# Password module start
+@app.route('/add_pwd', methods=['POST'])
+@token_required
+def add_new_pwd():
+    try:
+        req_data = request.get_json()
+        user_password = req_data['password']
+        user_id = login_session['id']
+        app_id = req_data['app_id']
+
+        appIsExist = LegacyApp.check_app_id(app_id)
+        if user_password == "":
+            return jsonify(Process='Invalid action!', Process_Message='Please Enter your password!')
+        elif appIsExist is True:
+            app_user_id_exist = PasswordList.check_app_id_user_id(app_id,user_id)
+            if app_user_id_exist is True:
+                # user defined functions
+                hibp_result = Password.check_hibp(user_password)
+                is_complexity, complexity_result_msg = Password.check_complexity(user_password)
+                encry_result = Password.encrypt_password(user_password)
+                #return encry_result
+                if is_complexity is False:
+                    return jsonify(Process='ERROR!', Process_Message=complexity_result_msg)
+
+                elif hibp_result is True:
+                    return jsonify(Process='ERROR!', Process_Message='This password is already in HIBP Database.')
+
+                else:
+                    response = PasswordList.add_app_pwd(encry_result, user_id, app_id)
+                    return jsonify({"Message": "Succesfuly saved"}), 201
+            else:
+                return jsonify({"Error": "You already created the password for this application."}), 401
+        else:
+            return jsonify({"Error": "The entered app id is not in the database"}), 401
+
+    except (KeyError, exceptions.BadRequest):
+        return jsonify(Process='ERROR!', Process_Message='Your token is expired! Please login in again.')
+
+
+@app.route('/pwd_list', methods=['GET'])
+@token_required
+def get_pwd():
+    #Function to get all the password in the database
+    try:
+        result = PasswordList.get_all_password(login_session['id'])
+        response = make_response(jsonify({"status": result}))
+        return response
+    except (KeyError, exceptions.BadRequest):
+        return jsonify(Process='ERROR!', Process_Message='Your token is expired! Please login in again.')
+
+
 
 #This method generating System admin profile and cannot call by api end point
 @app.before_request

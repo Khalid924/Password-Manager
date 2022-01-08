@@ -6,6 +6,8 @@ import bcrypt
 import os
 import string
 
+key = '59703273357638792F423F4528482B8D'
+genrated_key = key.encode('utf-8')
 
 class Password:
     @staticmethod
@@ -111,3 +113,21 @@ class Password:
         hash_pwd=hash_password.encode("utf-8")
         passsword_status =  bcrypt.checkpw(hash_pwd, password)
         return passsword_status
+
+
+    @staticmethod
+    def encrypt_password(password):
+        BLOCK_SIZE = 32 
+        key = genrated_key
+        plain_text = password
+        data = plain_text.encode('utf-8')
+        cipher = AES.new(key, AES.MODE_ECB)
+        ciphered_text = cipher.encrypt(pad(data,BLOCK_SIZE))
+        return ciphered_text
+
+
+    def decrypt_pwd(cipher_text):
+        cipher = AES.new(genrated_key, AES.MODE_ECB)
+        deciphered_bytes = cipher.decrypt(cipher_text)
+        decrypted_data = deciphered_bytes.decode('utf-8')
+        return ''.join(x for x in decrypted_data if x in string.printable)
