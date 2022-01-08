@@ -30,7 +30,7 @@ def token_required(f):
             }), 401
         try:
 
-            token = jwt.decode(token, app.config['SECRET_KEY'],algorithms=["HS256"])
+            token = jwt.decode(token, app.config['SECRET_KEY'],algorithms=["HS256"], verify = False)
             return f(*args,  **kwargs)
         
         except (jwt.exceptions.InvalidSignatureError, jwt.InvalidTokenError, exceptions.BadRequest):
