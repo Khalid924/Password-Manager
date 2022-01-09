@@ -229,7 +229,7 @@ def get_pwd():
         return jsonify(Process='ERROR!', Process_Message='Your token is expired! Please login in again.')
 
 
-@app.route('flask_riderect')
+@app.route('/flask_riderect')
 def falsk_redirect():
     url = request.args["next"]
     return redirect(url)
