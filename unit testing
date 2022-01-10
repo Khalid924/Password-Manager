@@ -1,0 +1,64 @@
+# First importing neccessary libraries here
+import os
+from .password import Password as Password
+import unittest
+
+
+class PasswordTest(unittest.TestCase):
+        
+
+    def test_hibp(self):
+        #Check if the created password is leaked or not
+        #Returns true if the password is leaked online
+        self.assertTrue(Password.check_hibp(self.password1))
+        self.assertTrue(Password.check_hibp(self.password2))
+        self.assertTrue(Password.check_hibp(self.password3))
+        #return false since the password isnt leaked
+        self.assertFalse(Password.check_hibp(self.password5))
+ 
+    def test_password_validity(self):
+        #check if the entered password and hash passwords are same 
+        self.assertTrue(Password.verify_password(self.password1, Password.hash_pwd(self.password1)))  
+        self.assertTrue(Password.verify_password(self.password2, Password.hash_pwd(self.password2)))  
+        self.assertFalse(Password.verify_password(self.password1, Password.hash_pwd(self.password4)))  
+        self.assertFalse(Password.verify_password(self.password3, Password.hash_pwd(self.password5)))
+
+    def setUp(self):
+        self.password1 = os.getenv("password1")
+        self.password2 = os.getenv("password2")
+        self.password3 = os.getenv("password3")
+        self.password4 = os.getenv("password4")
+        self.password5 = os.getenv("password5")
+        self.password6 = os.getenv("password6")
+
+    def test_encrypt_decrypt_pwd(self):
+        #Using python cryptodome encryption and decryption functions to store passwords in a secure way.
+        cipher_text = Password.encrypt_password(self.password5)
+        decrypt_text = Password.decrypt_pwd(cipher_text)
+        #Test same password with encryption and decryption functions
+        self.assertTrue(decrypt_text == self.password5)
+        #Testing different passwords with encryption and decryption functions
+        self.assertFalse(decrypt_text == self.password4)
+
+    def test_complexity(self):
+        self.assertEqual(Password.check_complexity(self.password1+'1'), (False, 'Please check if your contain one uppercase letter'))
+        self.assertEqual(Password.check_complexity(self.password1+'1A'), (False, 'Please check if your contain one special charater'))
+        self.assertEqual(Password.check_complexity(self.password1+'1A#'), (True, 'Password Accepted'))
+        self.assertEqual(Password.check_complexity(self.password2+'A'), (False, 'Please check if your contain one lowercase letter'))
+        self.assertEqual(Password.check_complexity(self.password4), (False, 'Please check if your has at least 10 characters'))
+        self.assertEqual(Password.check_complexity(self.password1), (False, 'Please check if your your password contain one number'))
+        self.assertEqual(Password.check_complexity(self.password1+'1A#ß'), (False, 'Please check if you enter allowed charaters'))
+        self.assertEqual(Password.check_complexity(self.password6), (False, 'Please check if your is at max 20 letters'))
+
+    
+    
+
+    
+
+    def tearDown(self):
+        pass   
+
+    
+   
+if __name__ == '__main__':
+    unittest.main()
